@@ -132,5 +132,35 @@ export function makeMath(addends: number[]): string {
  * And the array [1, 9, 7] would become [1, 9, 7, 17]
  */
 export function injectPositive(values: number[]): number[] {
-    return [];
+    if (values.length === 0) {
+        return [0];
+    }
+    const isThereNoNeg: boolean = values.reduce(
+        (curr_state: boolean, curr_num: number) => curr_num > 0 && curr_state,
+        true,
+    );
+    if (!isThereNoNeg) {
+        const new_array: number[] = [...values];
+        //find index of first negative number
+        const whereNegIs: number = values.findIndex(
+            (value: number): boolean => value < 0,
+        );
+        //get sum of point before first negative number
+        const upToPointSum: number = values.reduce(
+            (curr_sum: number, curr_num: number, curr_ind: number) =>
+                curr_ind < whereNegIs ?
+                    (curr_sum += curr_num)
+                :   (curr_sum += 0),
+            0,
+        );
+        //splice in sum
+        new_array.splice(whereNegIs + 1, 0, upToPointSum);
+        return new_array;
+    } else {
+        const sum: number = values.reduce(
+            (curr_sum: number, curr_num: number) => (curr_sum += curr_num),
+            0,
+        );
+        return [...values, sum];
+    }
 }
